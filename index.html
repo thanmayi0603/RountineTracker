@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Routine Tracker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#fbf6ed;
+  --card:#fffaf3;
+  --text:#8b6f5a;
+  --muted:#b59b86;
+  --border:#b08d72;
+    --accent:#b08d72;
+
+
+  --water:#dff1f7;
+  --workout:#f3d3a3;
+  --read:#e6e0ef;
+  --write:#e6ddb0;
+  --eat:#f8d1c6;
+  --sleep:#edd9cb;
+}
+
+[data-theme="dark"]{
+  --bg:#1c1917;
+  --card:#292524;
+  --text:#f5f5f4;
+  --muted:#a8a29e;
+  --border:#d6d3d1;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:28px 36px;
+}
+
+header h1{
+  margin:0;
+  font-family:"Playfair Display", serif;
+  font-weight:600;
+  letter-spacing:2px;
+}
+
+.toggle{
+  padding:10px 18px;
+  border-radius:20px;
+  background:var(--card);
+  cursor:pointer;
+  border:1px solid var(--border);
+}
+
+.dashboard{
+  display:grid;
+  grid-template-columns:1.4fr 1fr;
+  gap:32px;
+  padding:0 36px 36px;
+}
+
+.card{
+  background:var(--card);
+  border-radius:26px;
+  padding:28px;
+  border:1px solid rgba(176,141,114,.35);
+}
+
+h2{
+  margin:0 0 12px;
+  font-family:"Playfair Display", serif;
+  font-weight:600;
+}
+
+/* ---------------- HABITS ---------------- */
+
+.habit-input-row{
+  display:flex;
+  gap:10px;
+  margin-bottom:14px;
+}
+
+.habit-input-row input{flex:1}
+
+.habit-grid{
+  display:grid;
+  grid-template-columns:160px repeat(7,1fr) 40px;
+  gap:12px;
+  margin-top:18px;
+  align-items:center;
+}
+
+.habit-name{
+  padding:14px 18px;
+  border-radius:14px;
+  font-weight:600;
+}
+
+.habit-day{
+  text-align:center;
+  font-weight:600;
+  color:var(--muted);
+}
+
+.habit-cell{
+  width:26px;
+  height:26px;
+  border-radius:50%;
+  border:2px solid var(--border);
+  margin:auto;
+  cursor:pointer;
+}
+
+.habit-cell.done{background:var(--border)}
+
+.delete-btn{
+  background:none;
+  border:none;
+  cursor:pointer;
+  font-size:18px;
+  color:var(--muted);  
+  opacity:.8;
+}
+
+.delete-btn:hover{
+  opacity:1;
+}
+
+
+.reset-btn{
+  background:none;
+  border:none;
+  cursor:pointer;
+  font-size:16px;
+  margin-bottom:12px;
+  color:var(--muted);
+}
+
+/* ---------------- CALENDAR ---------------- */
+
+.calendar-header{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  margin:16px 0 10px;
+}
+
+.calendar-header div{
+  text-align:center;
+  font-size:13px;
+  color:var(--muted);
+}
+
+.calendar{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:14px;
+}
+
+.day{
+  height:80px;               /* softer, smaller day card */
+  border-radius:14px;        /* softer corners */
+  padding:8px;
+  background:rgba(176,141,114,.12);
+  font-size:14px;
+  position:relative;
+  cursor:pointer;
+}
+
+.day.has-event::after{
+  content:'•';
+  position:absolute;
+  top:6px;
+  right:10px;
+  font-size:22px;
+}
+
+.day small{
+  display:block;
+  font-size:12px;            /* slightly larger text */
+  opacity:.75;
+}
+
+/* ---------- CALENDAR POPUP ---------- */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.35);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
+}
+
+.modal-box{
+  background:var(--card);
+  padding:22px;
+  border-radius:22px;
+  width:300px;
+  border:1px solid var(--border);
+}
+
+.modal-box textarea{
+  margin-top:10px;
+}
+
+/* ---------------- TODOS ---------------- */
+
+.todo-input-row{
+  display:flex;
+  gap:10px;
+  margin-bottom:14px;
+}
+
+.todo-input-row input{flex:1}
+
+.todo-item{
+  position:relative;
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  padding:10px 34px 10px 6px;
+  border-bottom:1px dashed rgba(176,141,114,.35);
+}
+
+.todo-bullet{font-size:20px}
+
+.todo-text{flex:1;cursor:pointer}
+
+.todo-item.done .todo-text{
+  text-decoration:line-through;
+  opacity:.6;
+}
+
+.delete-todo{
+  position:absolute;
+  right:6px;
+  top:6px;
+  background:none;
+  border:none;
+  font-size:18px;
+  cursor:pointer;
+  color:var(--muted);
+}
+
+/* ---------------- NOTES ---------------- */
+
+.notes-meta{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:6px;
+  display:flex;
+  justify-content:space-between;
+}
+
+#notesArea {
+  font-family: "Playfair Display", serif; /* journal vibe */
+  line-height:1.7;
+  transition: background 0.3s, border-color 0.3s;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none;
+
+  resize: none;
+  background: transparent;
+
+  padding: 14px 20px 20px 16px;
+  overflow-y: auto;   /* ✅ ONLY scroll here */
+  overflow-x: hidden;
+
+  scrollbar-gutter: stable;
+}
+
+#saveStatus {
+  font-weight:600;
+  color:var(--border);
+  transition: all 0.4s ease;
+}
+
+.notes-meta span#saveStatus.saved {
+  transform: scale(1.1);
+  color:green;
+}
+
+/* ---------------- COMMON ---------------- */
+
+input,textarea,select{
+  width:100%;
+  padding:12px 14px;
+  border-radius:14px;
+  border:1px solid var(--border);
+  margin-top:12px;
+  background:transparent;
+  color:var(--text);
+}
+
+textarea{
+  font-family:"Playfair Display", serif;
+  line-height:1.6;
+}
+
+button.action{
+  padding:12px 18px;
+  border-radius:14px;
+  border:none;
+  background:var(--border);
+  color:white;
+  cursor:pointer;
+  font-weight:600;
+}
+
+input:focus,
+select:focus{
+  outline:none;
+  border-color:var(--border);
+  box-shadow:0 0 0 2px rgba(176,141,114,.35);
+}
+
+textarea:focus:not(#notesArea){
+  box-shadow:0 0 0 2px rgba(176,141,114,.35);
+}
+
+[contenteditable]:focus{
+  outline:none;
+  box-shadow:0 0 0 2px rgba(176,141,114,.35);
+}
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-color: var(--card);
+  color: var(--text);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+
+  padding: 6px 18px 6px 10px;  /* smaller select */
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+
+  cursor: pointer;
+}
+select:focus {
+  outline: none;
+  box-shadow: 0 0 0 1.5px rgba(176,141,114,.35);
+}
+
+select:hover {
+  border-color: var(--accent);
+}
+
+select option {
+  background-color: var(--card);
+  color: var(--text);
+}
+
+select option:checked {
+  background-color: #e7dcd1;
+  color: #6b4e3d;
+}
+
+select option:hover {
+  background-color: #efe4da;
+}
+
+.custom-select-wrapper{
+  position: relative;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.custom-select{
+  position: relative;
+  padding: 10px 16px;          /* smaller height */
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--text);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.custom-select::after{
+  content: "⌄";
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--border);
+}
+
+.custom-options{
+  position: absolute;
+  top: 110%;
+  left: 0;
+  right: 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  z-index: 2000;
+  box-shadow: 0 10px 24px rgba(0,0,0,.08);
+}
+
+.custom-option{
+  padding: 14px 20px;
+  cursor: pointer;
+}
+
+.custom-option:hover{
+  background: rgba(176,141,114,.15);
+}
+
+.custom-option.selected{
+  background: rgba(176,141,114,.25);
+  font-weight: 600;
+}
+
+/* ---------- TYPOGRAPHY REFINEMENT ---------- */
+h1,h2{
+  font-family: "Playfair Display", serif;
+  letter-spacing:1px;
+  line-height:1.3;
+}
+
+/* ---------- NOTES SCROLLBAR STYLING ---------- */
+#notesArea {
+  scrollbar-width: thin;            /* Firefox */
+  scrollbar-color: var(--border) var(--card); /* thumb and track for Firefox */
+}
+
+/* Webkit browsers (Chrome, Edge, Safari) */
+#notesArea::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* #notesArea::-webkit-scrollbar-track {
+  background: var(--card);
+  border-radius: 10px;
+} */
+ #notesArea::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 6px;   /* 👈 THIS is the border breathing space */
+}
+
+
+#notesArea::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 10px;
+  border: 2px solid var(--card); /* padding effect */
+}
+
+#notesArea::-webkit-scrollbar-thumb:hover {
+  background-color: darken(var(--border), 10%);
+}
+/* Make the notes area fill available space but leave room for meta info */
+/* Adjust the notes section */
+.card textarea#notesArea {
+  min-height: 140px; /* slightly taller so content doesn't touch the border */
+  padding-bottom: 20px; /* extra space at the bottom */
+}
+
+
+/* ===== GLOBAL textarea scrollbar gap fix ===== */
+/* textarea {
+  padding-right: 36px;
+  box-sizing: border-box;
+  scrollbar-gutter: stable both-edges;
+} */
+
+/* Chrome / Edge / Safari */
+/* textarea::-webkit-scrollbar-track {
+  margin: 30px;
+  border-radius: 10px;
+} */
+/* ===== NOTES EDGE FIX ===== */
+/* ===== NOTES — FINAL PERFECT FIX ===== */
+
+
+.notes-shell {
+  border: 1px solid rgba(176,141,114,.45);
+  border-radius: 18px;
+  background: var(--card);
+  padding: 6px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.notes-shell:focus-within {
+  border-color: var(--border);
+  box-shadow: 0 0 0 2px rgba(176,141,114,.35);
+}
+
+/* textarea is clean */
+.notes-shell textarea {
+  border: none;
+  resize: none;
+  background: transparent;
+  padding: 14px 16px;
+  outline: none;
+  /* overflow: hidden;  */
+  /* IMPORTANT */
+   overflow-y: auto;   /* REQUIRED for resize */
+  overflow-x: hidden;
+}
+
+/* scrollbar styling */
+.notes-shell::-webkit-scrollbar {
+  width: 8px;
+}
+
+.notes-shell::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 6px;
+}
+
+.notes-shell::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 10px;
+}
+/* Notes card should not add extra framing */
+.card:has(.notes-shell) {
+  padding: 20px;
+}
+
+/* ===== CALENDAR POPUP INPUT FOCUS FIX ===== */
+
+.modal-box textarea {
+  background: transparent;
+  border: 1px solid rgba(176,141,114,.45);
+  border-radius: 14px;
+  padding: 12px 14px;
+  color: var(--text);
+  resize: none;
+
+  outline: none;
+  box-shadow: none;
+
+  transition: border-color .25s ease, box-shadow .25s ease;
+}
+
+.modal-box textarea:focus {
+  border-color: var(--border);
+  box-shadow: 0 0 0 2px rgba(176,141,114,.35);
+}
+/* ===============================
+   DARK MODE FOCUS GLOW TUNING
+================================ */
+
+[data-theme="dark"] input:focus,
+[data-theme="dark"] textarea:focus,
+[data-theme="dark"] select:focus,
+[data-theme="dark"] .notes-shell:focus-within {
+  border-color: #e7c9a9;
+  box-shadow: 0 0 0 2px rgba(231,201,169,.45);
+}
+
+
+[data-theme="dark"] {
+  --water: #245a6a;
+  --workout: #7a4f1d;
+  --read: #4b3f6b;
+  --write: #6b5d1e;
+  --eat: #7a3a2e;
+  --sleep: #6a4a3a;
+}
+/* [data-theme="dark"] .habit-name {
+  color: #f5f5f4;
+}
+[data-theme="dark"] .habit-name {
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
+} */
+ /*222*/
+ 
+ /* [data-theme="dark"] .habit-name {
+  color: #f5f5f4;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); */
+
+  /* 🔥 THIS is the magic */
+  /* filter: brightness(1.15) saturate(0.75);
+}
+[data-theme="dark"] .habit-name {
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255,255,255,.06),
+    rgba(0,0,0,.12)
+  );
+}
+[data-theme="dark"] .habit-name {
+  color: #f5f5f4;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
+  filter: brightness(1.15) saturate(0.75);
+} */
+[data-theme="dark"] .habit-name {
+  color: #f5f5f4;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
+
+  /* soften heavy colors */
+  filter: brightness(1.15) saturate(0.75);
+
+  /* subtle depth */
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255,255,255,.06),
+    rgba(0,0,0,.12)
+  );
+}
+[data-theme="dark"] .habit-name[contenteditable="true"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(231,201,169,.45);
+}
+[data-theme="dark"] button.action {
+  background: #c7ab8e;
+  color: #1c1917;
+}
+[data-theme="dark"] .habit-cell {
+  border-color: #c7ab8e;
+}
+[data-theme="dark"] .habit-cell.done {
+  background:#c7ab8e ;
+}
+
+/* ===============================
+   RESPONSIVE FIX (ALL SCREENS)
+================================ */
+
+/* Tablets & below */
+@media (max-width: 1024px){
+  .dashboard{
+    grid-template-columns:1fr;
+    padding:0 24px 24px;
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 600px){
+
+  header{
+    padding:18px 20px;
+    flex-direction:column;
+    gap:12px;
+    text-align:center;
+  }
+
+  .dashboard{
+    padding:0 16px 20px;
+    gap:20px;
+  }
+
+  .card{
+    padding:20px;
+    border-radius:20px;
+  }
+
+  /* Habits → horizontal scroll instead of breaking */
+  .habit-grid{
+    overflow-x:auto;
+    padding-bottom:10px;
+  }
+
+  .habit-grid::-webkit-scrollbar{
+    height:6px;
+  }
+
+  .habit-grid::-webkit-scrollbar-thumb{
+    background:var(--border);
+    border-radius:10px;
+  }
+
+  /* Calendar days slightly smaller */
+  .day{
+    height:70px;
+    font-size:13px;
+  }
+
+  /* Notes better typing space */
+  #notesArea{
+    min-height:180px;
+  }
+}
+/* ===============================
+   FOOTER — MADE WITH LOVE
+================================ */
+
+.app-footer{
+  margin-top: 24px;
+  padding: 16px 0 20px;
+  text-align: center;
+  font-family: "Playfair Display", serif;
+  font-size: 13px;
+  color: var(--muted);
+  opacity: 0.9;
+}
+
+.app-footer .heart{
+  color: var(--border);
+  margin: 0 4px;
+  font-size: 14px;
+}
+
+/* dark mode tuning */
+[data-theme="dark"] .app-footer{
+  color: #d6d3d1;
+}
+
+[data-theme="dark"] .app-footer .heart{
+  color: #e7c9a9;
+}
+
+/* mobile spacing */
+@media (max-width: 600px){
+  .app-footer{
+    font-size: 12px;
+    padding-bottom: 16px;
+  }
+}
+
+/* =========================================
+   DARK MODE — ALL TEXT TO FOOTER COLOR
+   (EXPERIMENT / PREVIEW ONLY)
+========================================= */
+
+[data-theme="dark"]{
+  --footer-brown: #e7c9a9; /* same tone as your footer */
+}
+
+/* Headings */
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3{
+  color: var(--footer-brown);
+}
+
+/* Calendar day numbers */
+[data-theme="dark"] .day strong{
+  color: var(--footer-brown);
+}
+
+/* Habit names */
+[data-theme="dark"] .habit-name{
+  color: var(--footer-brown);
+}
+
+/* Inputs when typing */
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select{
+  color: var(--footer-brown);
+}
+
+/* Todo text */
+[data-theme="dark"] .todo-text{
+  color: var(--footer-brown);
+}
+
+/* Notes text */
+[data-theme="dark"] #notesArea{
+  color: var(--footer-brown);
+}
+
+/* Placeholders (slightly dim) */
+[data-theme="dark"] ::placeholder{
+  color: rgba(231,201,169,.55);
+}
+
+/* =========================================
+   DARK MODE — RESTORE CONTROLS (BALANCE)
+========================================= */
+
+[data-theme="dark"] .custom-select,
+[data-theme="dark"] .custom-option,
+[data-theme="dark"] .day strong{
+  color:#c7ab8e ; /* soft white */
+}
+
+[data-theme="dark"] .day small{
+  color:#c7ab8e ;
+}
+
+/* dropdown arrow */
+[data-theme="dark"] .custom-select::after{
+  color: #c7ab8e;
+}
+
+/* =========================================
+   DARK MODE — DROPDOWN BORDER & ARROW
+========================================= */
+
+[data-theme="dark"] .custom-select{
+  border-color: #e7c9a9;   /* footer brown */
+}
+
+[data-theme="dark"] .custom-select::after{
+  color: #e7c9a9;          /* dropdown arrow */
+}
+
+/* dropdown options border */
+[data-theme="dark"] .custom-options{
+  border-color: #e7c9a9;
+}
+/* =========================================
+   DARK MODE — CALENDAR EVENT DOT
+========================================= */
+
+[data-theme="dark"] .day.has-event::after{
+  color: #e7c9a9;   /* footer brown */
+}
+/* =========================================
+   DARK MODE — INPUT BORDERS LIKE NOTES
+========================================= */
+
+[data-theme="dark"] input{
+  border: 1px solid rgba(231,201,169,.45); /* same softness as notes */
+  background: transparent;
+  color: #e7c9a9;
+}
+
+[data-theme="dark"] input:focus{
+  border-color: #e7c9a9;
+  box-shadow: 0 0 0 2px rgba(231,201,169,.35);
+}
+
+/* =========================================
+   DARK MODE — THIN DROPDOWN BORDER (MATCH NOTES)
+========================================= */
+
+[data-theme="dark"] .custom-select{
+  border-width: 1px;                 /* ⬅ thinner */
+  border-color: rgba(231,201,169,.45);
+}
+
+[data-theme="dark"] .custom-select:focus-within{
+  border-color: #e7c9a9;
+  box-shadow: 0 0 0 2px rgba(231,201,169,.35);
+}
+
+/* =========================================
+   DARK MODE — EVENT POPUP BORDER (LIKE NOTES)
+========================================= */
+
+[data-theme="dark"] .modal-box{
+  border: 1px solid rgba(231,201,169,.45);
+}
+
+/* =========================================
+   DARK MODE — CANCEL BUTTON STYLE
+========================================= */
+
+.cancel-btn{
+  padding:12px 18px;
+  border-radius:14px;
+  border:1px solid rgba(231,201,169,.45);
+  background: transparent;
+  color: #e7c9a9;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.cancel-btn:hover{
+  background: rgba(231,201,169,.12);
+}
+/* =========================================
+   DARK MODE — NOTES SAVE STATUS
+========================================= */
+
+[data-theme="dark"] #saveStatus{
+  color: rgba(231,201,169,.8);   /* warm brown */
+}
+
+[data-theme="dark"] #saveStatus.saved{
+  color: #e7c9a9;               /* solid footer brown */
+  transform: scale(1.05);
+}
+/* =========================================
+   DARK MODE — THEME TOGGLE BORDER
+========================================= */
+
+[data-theme="dark"] .toggle{
+  border: 1px solid rgba(231,201,169,.45);
+  background: transparent;
+  color: #e7c9a9;
+}
+
+[data-theme="dark"] .toggle:hover{
+  background: rgba(231,201,169,.12);
+}
+
+[data-theme="dark"] .toggle:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(231,201,169,.35);
+}
+
+
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>My Daily Journal</h1>
+  <div class="toggle" onclick="toggleTheme()">☀️ / 🌙</div>
+</header>
+
+<section class="dashboard">
+
+<!-- HABITS -->
+<div class="card">
+  <h2>Weekly Habits</h2>
+  <button class="reset-btn" onclick="resetWeek()">⟳ Reset Week</button>
+
+  <div class="habit-input-row">
+    <input id="habitInput" placeholder="Add new habit">
+    <button class="action" onclick="addHabit()">Add</button>
+  </div>
+
+  <div class="habit-grid" id="habits"></div>
+</div>
+
+<!-- CALENDAR -->
+<div class="card">
+  <h2>Calendar 2026</h2>
+  <div class="custom-select-wrapper">
+  <div class="custom-select" id="monthPicker">January</div>
+</div>
+
+
+  <div class="calendar-header">
+    <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
+  </div>
+  <div class="calendar" id="calendar"></div>
+</div>
+
+<!-- TODOS -->
+<div class="card">
+  <h2>Todos</h2>
+  <div class="todo-input-row">
+    <input id="todoInput" placeholder="Add todo">
+    <button class="action" onclick="addTodo()">Add</button>
+  </div>
+  <div id="todos"></div>
+</div>
+
+<!-- NOTES -->
+<div class="card">
+  <h2>Notes</h2>
+  <!-- <textarea id="notesArea" rows="6" placeholder="Write freely..."></textarea> -->
+   <div class="notes-shell">
+  <textarea id="notesArea" rows="6" placeholder="Write freely..."></textarea>
+</div>
+
+  <div class="notes-meta">
+    <span id="saveStatus">Saved ✓</span>
+    <span id="lastEdit"></span>
+  </div>
+</div>
+
+</section>
+
+<script>
+/* ---------- THEME ---------- */
+let theme=localStorage.getItem("theme")||"light";
+document.documentElement.setAttribute("data-theme",theme);
+function toggleTheme(){
+  theme=theme==="light"?"dark":"light";
+  document.documentElement.setAttribute("data-theme",theme);
+  localStorage.setItem("theme",theme);
+}
+
+/* ---------- HABITS (UNCHANGED) ---------- */
+const habitColors=["var(--water)","var(--workout)","var(--read)","var(--write)","var(--eat)","var(--sleep)"];
+let habitNames=JSON.parse(localStorage.getItem("habitNames"))||[];
+const days=["M","T","W","T","F","S","S"];
+const habitBox=document.getElementById("habits");
+
+function renderHabits(){
+  const data=JSON.parse(localStorage.getItem("habitData"))||{};
+  habitBox.innerHTML="<div></div>"+days.map(d=>`<div class='habit-day'>${d}</div>`).join("")+"<div></div>";
+  habitNames.forEach((h,i)=>{
+    let row = `
+  <div class="habit-name"
+       contenteditable="true"
+       onblur="renameHabit('${h}', this.innerText)"
+       onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"
+       style="background:${habitColors[i%habitColors.length]}">
+    ${h}
+  </div>`;
+
+    for(let d=0;d<7;d++){
+      row+=`<div class='habit-cell ${data[h]?.[d]?"done":""}' onclick='toggleHabit("${h}",${d})'></div>`;
+    }
+    row+=`<button class='delete-btn' onclick='deleteHabit("${h}")'>✕</button>`;
+    habitBox.innerHTML+=row;
+  });
+}
+
+function toggleHabit(h,d){
+  const data=JSON.parse(localStorage.getItem("habitData"))||{};
+  data[h]=data[h]||Array(7).fill(false);
+  data[h][d]=!data[h][d];
+  localStorage.setItem("habitData",JSON.stringify(data));
+  renderHabits();
+}
+
+function resetWeek(){
+  const data=JSON.parse(localStorage.getItem("habitData"))||{};
+  Object.keys(data).forEach(h=>data[h]=Array(7).fill(false));
+  localStorage.setItem("habitData",JSON.stringify(data));
+  renderHabits();
+}
+
+function addHabit(){
+  const input=document.getElementById("habitInput");
+  if(!input.value.trim())return;
+  habitNames.push(input.value.trim());
+  localStorage.setItem("habitNames",JSON.stringify(habitNames));
+  const data=JSON.parse(localStorage.getItem("habitData"))||{};
+  data[input.value]=Array(7).fill(false);
+  localStorage.setItem("habitData",JSON.stringify(data));
+  input.value="";
+  renderHabits();
+}
+function renameHabit(oldName, newName){
+  newName = newName.trim();
+
+  // safety checks
+  if (!newName || newName === oldName) return;
+  if (habitNames.includes(newName)) {
+    alert("Habit already exists");
+    return;
+  }
+
+  const data = JSON.parse(localStorage.getItem("habitData")) || {};
+
+  // move habit data to new name
+  data[newName] = data[oldName] || Array(7).fill(false);
+  delete data[oldName];
+
+  // update habit list
+  habitNames = habitNames.map(h =>
+    h === oldName ? newName : h
+  );
+
+  localStorage.setItem("habitNames", JSON.stringify(habitNames));
+  localStorage.setItem("habitData", JSON.stringify(data));
+
+  renderHabits();
+}
+
+function deleteHabit(h){
+  habitNames=habitNames.filter(x=>x!==h);
+  localStorage.setItem("habitNames",JSON.stringify(habitNames));
+  const data=JSON.parse(localStorage.getItem("habitData"))||{};
+  delete data[h];
+  localStorage.setItem("habitData",JSON.stringify(data));
+  renderHabits();
+}
+renderHabits();
+
+/* ---------- CALENDAR ---------- */
+const monthPicker=document.getElementById("monthPicker");
+const cal=document.getElementById("calendar");
+let currentMonth = 0;
+
+const events=JSON.parse(localStorage.getItem("calendarEvents"))||{};
+
+const monthNames = [
+  "January","February","March","April","May","June",
+  "July","August","September","October","November","December"
+];
+
+function renderMonthPicker(){
+  monthPicker.textContent = monthNames[currentMonth];
+
+  const options = document.createElement("div");
+  options.className = "custom-options";
+
+  monthNames.forEach((m,i)=>{
+    const opt = document.createElement("div");
+    opt.className = "custom-option";
+    opt.textContent = m;
+
+    if(i === currentMonth) opt.classList.add("selected");
+
+    opt.onclick = () => {
+      currentMonth = i;
+      options.remove();
+      renderMonthPicker();
+      renderCalendar();
+    };
+
+    options.appendChild(opt);
+  });
+
+  monthPicker.onclick = (e) => {
+    e.stopPropagation();
+    document.querySelector(".custom-options")?.remove();
+    monthPicker.parentElement.appendChild(options);
+  };
+}
+
+document.addEventListener("click", () => {
+  document.querySelector(".custom-options")?.remove();
+});
+
+renderMonthPicker();
+
+function renderCalendar(){
+  const m = currentMonth;
+
+  cal.innerHTML="";
+  const first=new Date(2026,m,1).getDay();
+  const offset=(first+6)%7;
+  const daysIn=new Date(2026,m+1,0).getDate();
+  for(let i=0;i<offset;i++)cal.innerHTML+="<div></div>";
+  for(let d=1;d<=daysIn;d++){
+    const key=m+"-"+d;
+    cal.innerHTML+=`
+      <div class="day ${events[key]?"has-event":""}" onclick="openEvent(${m},${d})">
+        <strong>${d}</strong>
+        <small>${events[key]||""}</small>
+      </div>`;
+  }
+}
+renderCalendar();
+
+function openEvent(m,d){
+  const key=m+"-"+d;
+  const modal=document.createElement("div");
+  modal.className="modal";
+  modal.innerHTML=`
+    <div class="modal-box">
+      <h3>Add Event</h3>
+      <p style="font-size:13px;color:var(--muted)">
+        ${String(d).padStart(2,"0")}/${String(m+1).padStart(2,"0")}/2026
+      </p>
+      <textarea id="eventText" rows="3">${events[key]||""}</textarea>
+      <div style="display:flex;gap:10px;margin-top:14px">
+        <button class="action" id="saveEvent">Save</button>
+
+        <button class="cancel-btn" id="cancelEvent">Cancel</button>
+
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+
+  cancelEvent.onclick=()=>modal.remove();
+  saveEvent.onclick=()=>{
+    const t=eventText.value.trim();
+    if(t==="") delete events[key];
+    else events[key]=t;
+    localStorage.setItem("calendarEvents",JSON.stringify(events));
+    modal.remove();
+    renderCalendar();
+  };
+}
+
+/* ---------- TODOS ---------- */
+let todos=JSON.parse(localStorage.getItem("todos"))||[];
+const todosDiv=document.getElementById("todos");
+const todoInput=document.getElementById("todoInput");
+
+function renderTodos(){
+  todosDiv.innerHTML="";
+  todos.forEach((t,i)=>{
+    todosDiv.innerHTML+=`
+      <div class="todo-item ${t.done?"done":""}">
+        <span class="todo-bullet">•</span>
+        <span class="todo-text" onclick="toggleTodo(${i})">${t.text}</span>
+        <button class="delete-todo" onclick="deleteTodo(${i})">×</button>
+      </div>`;
+  });
+}
+function addTodo(){
+  if(!todoInput.value.trim())return;
+  todos.push({text:todoInput.value.trim(),done:false});
+  todoInput.value="";
+  saveTodos();
+}
+function toggleTodo(i){todos[i].done=!todos[i].done;saveTodos();}
+function deleteTodo(i){todos.splice(i,1);saveTodos();}
+function saveTodos(){localStorage.setItem("todos",JSON.stringify(todos));renderTodos();}
+renderTodos();
+
+/* ---------- NOTES (IMPROVED) ---------- */
+const notesArea=document.getElementById("notesArea");
+const saveStatus=document.getElementById("saveStatus");
+const lastEdit=document.getElementById("lastEdit");
+
+notesArea.value=localStorage.getItem("notesData")||"";
+
+function updateNotesTime(){
+  const d=new Date();
+  lastEdit.textContent=
+    d.toLocaleDateString()+" · "+
+    d.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+}
+
+notesArea.addEventListener("input", ()=>{
+  localStorage.setItem("notesData", notesArea.value);
+  saveStatus.textContent = "Typing…";
+
+  clearTimeout(saveStatus._timeout);
+  saveStatus._timeout = setTimeout(()=>{
+    saveStatus.textContent = "Saved ✓";
+    saveStatus.classList.add("saved");
+    setTimeout(()=>saveStatus.classList.remove("saved"), 600);
+  }, 800);
+
+  updateNotesTime();
+});
+
+updateNotesTime();
+</script>
+<footer class="app-footer">
+  <span>Made with <span class="heart">♥</span> by Thanmayi</span>
+</footer>
+
+</body>
+</html>
