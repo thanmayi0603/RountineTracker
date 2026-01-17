@@ -994,6 +994,33 @@ html, body {
     overflow-x: hidden;
   }
 }
+/* =========================================
+   MOBILE — FIT HABITS INTO SCREEN
+   (NO HORIZONTAL SCROLL)
+========================================= */
+
+@media (max-width: 600px){
+
+  .habit-grid{
+    grid-template-columns: 120px repeat(7, 1fr) 30px;
+    gap: 8px;
+  }
+
+  .habit-name{
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .habit-cell{
+    width: 20px;
+    height: 20px;
+    border-width: 1.5px;
+  }
+
+  .habit-day{
+    font-size: 11px;
+  }
+}
 
 
 </style>
