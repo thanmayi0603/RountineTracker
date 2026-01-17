@@ -905,6 +905,57 @@ h1,h2{
   box-shadow: 0 0 0 2px rgba(231,201,169,.35);
 }
 
+/* =========================================
+   MOBILE FIX — PREVENT CUTTING / OVERFLOW
+========================================= */
+
+/* Global safety */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Dashboard must never exceed screen */
+.dashboard {
+  width: 100%;
+}
+
+/* Cards should respect screen edges */
+.card {
+  max-width: 100%;
+}
+
+/* Calendar grid safety */
+.calendar {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Habit grid: allow scroll instead of overflow */
+@media (max-width: 600px) {
+  .habit-grid {
+    min-width: 520px;   /* keeps columns intact */
+  }
+
+  .card {
+    overflow-x: auto;   /* scroll inside card */
+  }
+}
+@media (max-width: 600px) {
+  header {
+    padding: 20px 16px;
+  }
+
+  header h1 {
+    text-align: center;
+    font-size: 28px;
+  }
+
+  .toggle {
+    margin-top: 6px;
+  }
+}
+
 
 </style>
 </head>
