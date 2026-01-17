@@ -955,6 +955,45 @@ html, body {
     margin-top: 6px;
   }
 }
+/* =========================================
+   MOBILE — FIT CALENDAR INTO SCREEN
+   (NO HORIZONTAL SCROLL)
+========================================= */
+
+@media (max-width: 600px){
+
+  /* calendar grid tighter */
+  .calendar{
+    gap: 8px;
+  }
+
+  /* day cards smaller */
+  .day{
+    height: 56px;
+    padding: 6px;
+    border-radius: 12px;
+    font-size: 12px;
+  }
+
+  .day strong{
+    font-size: 13px;
+  }
+
+  .day small{
+    font-size: 11px;
+    line-height: 1.2;
+  }
+
+  /* weekday header smaller */
+  .calendar-header div{
+    font-size: 11px;
+  }
+
+  /* ensure no scroll */
+  .card:has(.calendar){
+    overflow-x: hidden;
+  }
+}
 
 
 </style>
